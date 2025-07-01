@@ -3,9 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "node cham.js", // 👈 C’est ce que Render va utiliser
-    "start :edt":"node server.js",
-    "start:app": "expo start", // 👈 Pour toi en local
+    "start": "node cham.js", 
+    "start :edt": "node server.js",
+    "start:app": "expo start", 
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
