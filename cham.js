@@ -4,27 +4,29 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 
 dotenv.config();
+
 const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 
 app.get('/chamilo', async (req, res) => {
-    const browser = await puppeteer.launch({
-        headless: true,
-        executablePath: puppeteer.executablePath(),
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-      
+  let browser;
   try {
+    browser = await puppeteer.launch({
+      headless: true,
+      executablePath: puppeteer.executablePath(), // ✅ important pour Render
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
     const page = await browser.newPage();
     await page.goto('https://cas-simsu.grenet.fr/login?service=https%3A%2F%2Fchamilo.grenoble-inp.fr%2Fmain%2Fauth%2Fcas%2Flogincas.php', {
-  waitUntil: 'networkidle2',
-});
-    console.log('📍 URL actuelle :', page.url());
-  
+      waitUntil: 'networkidle2'
+    });
 
-    // Redirection vers CAS
+    console.log('📍 URL actuelle :', page.url());
+
+    // Connexion CAS
     await page.type('#username', process.env.CAS_USER);
     await page.type('#password', process.env.CAS_PASS);
     await Promise.all([
@@ -32,7 +34,7 @@ app.get('/chamilo', async (req, res) => {
       page.waitForNavigation({ waitUntil: 'networkidle2' }),
     ]);
 
-    // Navigation vers la page Chamilo
+    // Aller vers le cours
     await page.goto('https://chamilo.grenoble-inp.fr/courses/PHELMACATALOGUE/index.php?id_session=0', {
       waitUntil: 'networkidle2'
     });
@@ -41,10 +43,10 @@ app.get('/chamilo', async (req, res) => {
     res.set('Content-Type', 'text/html');
     res.send(html);
   } catch (err) {
-    console.error(err);
+    console.error('❌ Erreur :', err);
     res.status(500).send('Erreur lors de la récupération de Chamilo');
   } finally {
-    await browser.close();
+    if (browser) await browser.close();
   }
 });
 

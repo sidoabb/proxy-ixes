@@ -3,8 +3,8 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "install": "puppeteer install",
     "start": "expo start",
+    "postinstall": "PUPPETEER_SKIP_DOWNLOAD=false npm rebuild puppeteer",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
