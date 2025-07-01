@@ -15,8 +15,7 @@ app.get('/chamilo', async (req, res) => {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: puppeteer.executablePath(), // ✅ important pour Render
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'] // important pour Render
     });
 
     const page = await browser.newPage();
