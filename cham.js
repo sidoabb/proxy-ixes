@@ -14,10 +14,10 @@ app.get('/chamilo', async (req, res) => {
   let browser;
   try {
     browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'] // important pour Render
-    });
-
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'] // ✅ suffisant
+      });
+      
     const page = await browser.newPage();
     await page.goto('https://cas-simsu.grenet.fr/login?service=https%3A%2F%2Fchamilo.grenoble-inp.fr%2Fmain%2Fauth%2Fcas%2Flogincas.php', {
       waitUntil: 'networkidle2'
