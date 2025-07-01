@@ -1,6 +1,6 @@
 {
   "name": "phelmapp",
-  "main": "expo-router/entry",
+  "main": "cham.js",
   "version": "1.0.0",
   "scripts": {
     "start": "node cham.js", 
