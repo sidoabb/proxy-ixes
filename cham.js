@@ -10,11 +10,12 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 app.get('/chamilo', async (req, res) => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-
+    const browser = await puppeteer.launch({
+        headless: true,
+        executablePath: puppeteer.executablePath(),
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      
   try {
     const page = await browser.newPage();
     await page.goto('https://cas-simsu.grenet.fr/login?service=https%3A%2F%2Fchamilo.grenoble-inp.fr%2Fmain%2Fauth%2Fcas%2Flogincas.php', {
