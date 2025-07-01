@@ -17,7 +17,11 @@ app.get('/chamilo', async (req, res) => {
 
   try {
     const page = await browser.newPage();
-    await page.goto('https://chamilo.grenoble-inp.fr/', { waitUntil: 'networkidle2' });
+    await page.goto('https://cas-simsu.grenet.fr/login?service=https%3A%2F%2Fchamilo.grenoble-inp.fr%2Fmain%2Fauth%2Fcas%2Flogincas.php', {
+  waitUntil: 'networkidle2',
+});
+    console.log('📍 URL actuelle :', page.url());
+  
 
     // Redirection vers CAS
     await page.type('#username', process.env.CAS_USER);
