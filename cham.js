@@ -17,8 +17,7 @@ app.get('/chamilo', async (req, res) => {
       headless: true,
 
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
-      console.log('🧭 Chrome path:', process.env.PUPPETEER_EXECUTABLE_PATH);
-
+      
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
