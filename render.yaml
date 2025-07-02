@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: phelmapp
+    name: chamilo-proxy
     env: node
     buildCommand: |
       apt-get update && \
@@ -16,6 +16,6 @@ services:
       - key: PORT
         value: 3000
       - key: CAS_USER
-        value: ton_identifiant
+        value: abuzakus
       - key: CAS_PASS
-        value: ton_mot_de_passe
+        value: Sidogre2427-
