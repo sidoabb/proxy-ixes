@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: phelmapp
+    env: node
+    buildCommand: |
+      apt-get update && \
+      apt-get install -y wget unzip && \
+      wget https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.92/linux64/chrome-linux64.zip && \
+      unzip chrome-linux64.zip && \
+      mv chrome-linux64 /opt/render/.cache/puppeteer/chrome/linux-138.0.7204.92 && \
+      npm install
+    startCommand: node cham.js
+    envVars:
+      - key: PUPPETEER_EXECUTABLE_PATH
+        value: /opt/render/.cache/puppeteer/chrome/linux-138.0.7204.92/chrome-linux64/chrome
+      - key: PORT
+        value: 3000
+      - key: CAS_USER
+        value: ton_identifiant
+      - key: CAS_PASS
+        value: ton_mot_de_passe
