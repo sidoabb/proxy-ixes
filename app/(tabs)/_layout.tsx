@@ -13,6 +13,7 @@ export default function TabsLayout() {
           else if (route.name === "ToDo") iconName = "checkbox-outline";
           else if (route.name === "Chamilo") iconName = "document-text-outline";
           else if (route.name === "mail") iconName = "mail-outline";
+          else if (route.name == "ressource") iconName = 'home-outline';
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },

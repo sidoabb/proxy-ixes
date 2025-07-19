@@ -13,7 +13,7 @@ import {
 export default function ProfileScreen() {
   const router = useRouter();
 
-  // Exemple de données - à remplacer par des données réelles
+
   const profile = {
     photo: require('./photoidbis.jpg'),
 
@@ -21,7 +21,7 @@ export default function ProfileScreen() {
     nom: 'Abuzakuk',
     prenom: 'Sidonie',
     numEtudiant: '42402036',
-    filiere: 'Étudiante 2A',
+    filiere: ' 2A Sicom',
     mail: 'sidonie.abuzakuk@grenoble-inp.org',
   };
 
