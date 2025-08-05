@@ -6,8 +6,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
-  View
+  TouchableOpacity, useColorScheme, View
 } from 'react-native';
 
 type TodoItem = {
@@ -19,6 +18,25 @@ type TodoItem = {
 export default function TodoScreen() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [input, setInput] = useState('');
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  const colors = {
+    background: isDark ? '#121212' : 'white',
+    text: isDark ? '#fff' : '#000',
+    secondaryText: isDark ? '#aaa' : '#555',
+    progressBackground: isDark ? '#333' : '#eee',
+    progressColorLow: '#e74c3c',
+    progressColorMid: '#f39c12',
+    progressColorFull: '#4caf50',
+    border: isDark ? '#444' : '#ccc',
+    inputBackground: isDark ? '#1e1e1e' : 'white',
+    placeholder: isDark ? '#888' : '#555',
+    todoItem: isDark ? '#333' : '#eee',
+    todoDone: isDark ? '#2e7d32' : '#cce5cc',
+    doneText: isDark ? '#bbb' : 'gray',
+    emptyText: isDark ? '#aaa' : '#888',
+  };
 
   useEffect(() => {
     const loadTodos = async () => {
@@ -58,19 +76,19 @@ export default function TodoScreen() {
   const doneTodos = todos.filter((t) => t.done);
   const progress = todos.length > 0 ? doneTodos.length / todos.length : 0;
 
-  let progressColor = '#4caf50'; // vert
+  let progressColor = colors.progressColorFull;
   if (progress < 1) {
-    progressColor = progress <= 0.5 ? '#e74c3c' : '#f39c12'; // rouge ou orange
+    progressColor = progress <= 0.5 ? colors.progressColorLow : colors.progressColorMid;
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Ma ToDo List</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.text }]}>Ma ToDo List</Text>
 
-      <Text style={styles.count}>📝 À faire : {activeTodos.length}</Text>
-      <Text style={styles.count}>✅ Terminées : {doneTodos.length}</Text>
+      <Text style={[styles.count, { color: colors.secondaryText }]}>📝 À faire : {activeTodos.length}</Text>
+      <Text style={[styles.count, { color: colors.secondaryText }]}>✅ Terminées : {doneTodos.length}</Text>
 
-      <View style={styles.progressContainer}>
+      <View style={[styles.progressContainer, { backgroundColor: colors.progressBackground }]}>
         <View
           style={[
             styles.progressBar,
@@ -81,47 +99,47 @@ export default function TodoScreen() {
 
       <View style={styles.inputRow}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: colors.border, backgroundColor: colors.inputBackground, color: colors.text }]}
           placeholder="Nouvelle tâche"
-          placeholderTextColor="#555"
+          placeholderTextColor={colors.placeholder}
           value={input}
           onChangeText={setInput}
         />
         <Button title="Ajouter" onPress={addTodo} />
       </View>
 
-      <Text style={styles.sectionTitle}>📋 Tâches à faire</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>📋 Tâches à faire</Text>
       {activeTodos.length === 0 && (
-        <Text style={styles.emptyText}>Aucune tâche en cours.</Text>
+        <Text style={[styles.emptyText, { color: colors.emptyText }]}>Aucune tâche en cours.</Text>
       )}
       <FlatList
         data={activeTodos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.todoItem}
+            style={[styles.todoItem, { backgroundColor: colors.todoItem }]}
             onPress={() => toggleDone(item.id)}
             onLongPress={() => deleteTodo(item.id)}
           >
-            <Text style={styles.text}>{item.text}</Text>
+            <Text style={[styles.text, { color: colors.text }]}>{item.text}</Text>
           </TouchableOpacity>
         )}
       />
 
-      <Text style={styles.sectionTitle}>✅ Tâches terminées</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>✅ Tâches terminées</Text>
       {doneTodos.length === 0 && (
-        <Text style={styles.emptyText}>Aucune tâche terminée.</Text>
+        <Text style={[styles.emptyText, { color: colors.emptyText }]}>Aucune tâche terminée.</Text>
       )}
       <FlatList
         data={doneTodos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[styles.todoItem, styles.todoDone]}
+            style={[styles.todoItem, { backgroundColor: colors.todoDone }]}
             onPress={() => toggleDone(item.id)}
             onLongPress={() => deleteTodo(item.id)}
           >
-            <Text style={styles.textDone}>{item.text}</Text>
+            <Text style={[styles.textDone, { color: colors.doneText }]}>{item.text}</Text>
           </TouchableOpacity>
         )}
       />
@@ -133,8 +151,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: 'white',
-
   },
   title: {
     fontSize: 24,
@@ -144,12 +160,9 @@ const styles = StyleSheet.create({
   count: {
     fontSize: 16,
     marginBottom: 2,
-    color: '#555',
-  
   },
   progressContainer: {
     height: 10,
-    backgroundColor: '#eee',
     borderRadius: 5,
     overflow: 'hidden',
     marginVertical: 12,
@@ -165,7 +178,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 4,
     paddingHorizontal: 8,
     marginRight: 8,
@@ -178,17 +190,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontStyle: 'italic',
-    color: '#888',
     marginBottom: 8,
   },
   todoItem: {
     padding: 12,
-    backgroundColor: '#eee',
     borderRadius: 4,
     marginBottom: 8,
-  },
-  todoDone: {
-    backgroundColor: '#cce5cc',
   },
   text: {
     fontSize: 16,
@@ -196,6 +203,5 @@ const styles = StyleSheet.create({
   textDone: {
     fontSize: 16,
     textDecorationLine: 'line-through',
-    color: 'gray',
   },
 });

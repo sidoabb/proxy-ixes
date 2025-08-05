@@ -10,6 +10,7 @@ import {
   Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { useAppTheme } from '../theme';
 
 const STORAGE_KEY = 'events';
 const ICS_URL = 'https://proxy-ixes.onrender.com/edt';
@@ -21,6 +22,33 @@ const CATEGORIES = {
 };
 
 export default function CalendarScreen() {
+  const { theme } = useAppTheme();
+  const isDark = theme === 'dark';
+
+  const colors = {
+    background: isDark ? '#121212' : '#fff',
+    text: isDark ? '#f5f5f5' : '#000',
+    secondaryText: isDark ? '#cccccc' : '#444',
+    card: isDark ? '#1e1e1e' : '#fef3e2',
+    event: isDark ? '#2a2a2a' : '#f1f1f1',
+    border: isDark ? '#333' : '#e0e0e0',
+    progressBackground: isDark ? '#333' : '#e0e0e0',
+    progressText: isDark ? '#bbb' : '#444',
+    sectionTitle: isDark ? '#f5f5f5' : '#222',
+    shadowColor: isDark ? '#000' : '#000',
+    countdown: isDark ? '#ff8a65' : '#c0392b',
+    highlight: isDark ? '#ffd180' : '#d35400',
+    barBackground: isDark ? '#424242' : '#e0e0e0',
+    barFill: isDark ? '#81c784' : '#4caf50',
+    borderLeft: isDark ? '#90caf9' : '#4e91fc',
+    emptyText: isDark ? '#aaa' : '#666',
+    input: isDark ? '#444' : '#eee',
+    inputText: isDark ? '#f5f5f5' : '#111',
+    modalBackground: isDark ? '#1e1e1e' : '#fff',
+    category: isDark ? '#444' : '#ddd',
+    categorySelected: isDark ? '#666' : '#bbb',
+  };
+
   const [selectedDate, setSelectedDate] = useState('');
   const [events, setEvents] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
@@ -165,58 +193,74 @@ export default function CalendarScreen() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Calendar onDayPress={d => setSelectedDate(d.dateString)} markedDates={marked} />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <Calendar
+        onDayPress={d => setSelectedDate(d.dateString)}
+        markedDates={marked}
+        theme={{
+          calendarBackground: colors.background,
+          dayTextColor: colors.text,
+          monthTextColor: colors.text,
+          selectedDayBackgroundColor: 'tomato',
+          selectedDayTextColor: 'white',
+          todayTextColor: colors.highlight,
+        }}
+      />
 
       <View style={{ padding: 16 }}>
         <Button title="+ Ajouter un événement" onPress={() => setModalVisible(true)} />
       </View>
 
       <View style={{ flex: 1, padding: 16 }}>
-        <Text style={styles.sectionTitle}>📅 Événements le {selectedDate || '...'}</Text>
+        <Text style={styles(colors).sectionTitle}>📅 Événements le {selectedDate || '...'}</Text>
         <FlatList
           data={events[selectedDate] || []}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={({ item }) => (
-            <View style={[styles.eventItem, { borderLeftColor: CATEGORIES[item.category]?.color }]}>
+            <View style={[styles(colors).eventItem, { borderLeftColor: CATEGORIES[item.category]?.color }]}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.eventTitle}>
+                <Text style={styles(colors).eventTitle}>
                   {item.title} {item.id?.startsWith('custom-') ? `(${CATEGORIES[item.category]?.label})` : ''}
                 </Text>
-          
-                <Text style={styles.eventTime}>
+                <Text style={styles(colors).eventTime}>
                   🕒 {new Date(item.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {new Date(item.endDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
-          
-                {item.location ? (
-                  <Text style={styles.eventLocation}>📍 {item.location}</Text>
-                ) : null}
-          
+                {item.location ? <Text style={styles(colors).eventLocation}>📍 {item.location}</Text> : null}
                 {item.id?.startsWith('custom-') && item.description ? (
-                  <Text style={styles.eventDescription}>{item.description}</Text>
+                  <Text style={styles(colors).eventDescription}>{item.description}</Text>
                 ) : null}
               </View>
-          
               <TouchableOpacity onPress={() => deleteEvent(selectedDate, item.id)}>
                 <Ionicons name="trash" size={20} color="#d32f2f" />
               </TouchableOpacity>
             </View>
           )}
-          
-          ListEmptyComponent={<Text style={styles.emptyText}>Aucun événement prévu.</Text>}
+          ListEmptyComponent={<Text style={styles(colors).emptyText}>Aucun événement prévu.</Text>}
         />
       </View>
 
       <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalBackground}>
-          <ScrollView contentContainerStyle={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Ajouter un événement</Text>
+        <View style={styles(colors).modalBackground}>
+          <ScrollView contentContainerStyle={styles(colors).modalContainer}>
+            <Text style={styles(colors).modalTitle}>Ajouter un événement</Text>
 
-            <TextInput placeholder="Titre" placeholderTextColor="#666" value={title} onChangeText={setTitle} style={[styles.input, styles.inputBold]} />
-            <TextInput placeholder="Description" placeholderTextColor="#666" value={description} onChangeText={setDescription} style={[styles.input, styles.inputBold]} />
+            <TextInput
+              placeholder="Titre"
+              placeholderTextColor={colors.secondaryText}
+              value={title}
+              onChangeText={setTitle}
+              style={[styles(colors).input, styles(colors).inputBold]}
+            />
+            <TextInput
+              placeholder="Description"
+              placeholderTextColor={colors.secondaryText}
+              value={description}
+              onChangeText={setDescription}
+              style={[styles(colors).input, styles(colors).inputBold]}
+            />
 
-            <TouchableOpacity onPress={() => setShowStartPicker(true)} style={styles.input}>
-              <Text>Début : {startDate.toLocaleString()}</Text>
+            <TouchableOpacity onPress={() => setShowStartPicker(true)} style={styles(colors).input}>
+              <Text style={{ color: colors.text }}>Début : {startDate.toLocaleString()}</Text>
             </TouchableOpacity>
             {showStartPicker && (
               <DateTimePicker
@@ -230,8 +274,8 @@ export default function CalendarScreen() {
               />
             )}
 
-            <TouchableOpacity onPress={() => setShowEndPicker(true)} style={styles.input}>
-              <Text>Fin : {endDate.toLocaleString()}</Text>
+            <TouchableOpacity onPress={() => setShowEndPicker(true)} style={styles(colors).input}>
+              <Text style={{ color: colors.text }}>Fin : {endDate.toLocaleString()}</Text>
             </TouchableOpacity>
             {showEndPicker && (
               <DateTimePicker
@@ -245,14 +289,14 @@ export default function CalendarScreen() {
               />
             )}
 
-            <Text style={{ marginTop: 10 }}>Catégorie :</Text>
+            <Text style={{ marginTop: 10, color: colors.text }}>Catégorie :</Text>
             {Object.entries(CATEGORIES).map(([k, v]) => (
               <TouchableOpacity
                 key={k}
                 onPress={() => setCategory(k)}
-                style={[styles.categoryButton, category === k && styles.categorySelected]}
+                style={[styles(colors).categoryButton, category === k && styles(colors).categorySelected]}
               >
-                <Text>{v.label}</Text>
+                <Text style={{ color: colors.text }}>{v.label}</Text>
               </TouchableOpacity>
             ))}
 
@@ -267,44 +311,86 @@ export default function CalendarScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  sectionTitle: { fontWeight: 'bold', fontSize: 18, marginBottom: 10 },
-  emptyText: { fontStyle: 'italic', color: '#999' },
-  eventItem: {
-    flexDirection: 'row', backgroundColor: '#fafafa', padding: 10, marginTop: 8,
-    borderLeftWidth: 4, borderRadius: 6, elevation: 2, alignItems: 'center',
-  },
-  eventTitle: { fontSize: 16, fontWeight: '600', marginTop: 4,color: '#333'},
-  eventTime: { color: '#333', fontWeight: 'bold' },
-  eventDescription: {
-    fontSize: 14,
-    fontStyle: 'italic',
-    color: '#666',
-    marginTop: 4,
-  },
-  eventLocation: {
-    fontSize: 14,
-    color: '#444',
-    marginTop: 2,
-  },
-  modalBackground: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center'
-  },
-  modalContainer: {
-    backgroundColor: 'white', borderRadius: 8, padding: 16, minWidth: '80%', marginTop: 150
-  },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
-  input: {
-    backgroundColor: '#eee', padding: 10, borderRadius: 6, marginTop: 10
-  },
-  inputBold: {
-    fontWeight: '600',
-    color: '#111',
-  },
-  categoryButton: {
-    padding: 10, marginTop: 6, backgroundColor: '#ddd', borderRadius: 6
-  },
-  categorySelected: {
-    backgroundColor: '#bbb'
-  },
-});
+const styles = (colors) =>
+  StyleSheet.create({
+    sectionTitle: {
+      fontWeight: 'bold',
+      fontSize: 18,
+      marginBottom: 10,
+      color: colors.sectionTitle,
+    },
+    emptyText: {
+      fontStyle: 'italic',
+      color: colors.emptyText,
+    },
+    eventItem: {
+      flexDirection: 'row',
+      backgroundColor: colors.event,
+      padding: 10,
+      marginTop: 8,
+      borderLeftWidth: 4,
+      borderRadius: 6,
+      elevation: 2,
+      alignItems: 'center',
+    },
+    eventTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginTop: 4,
+      color: colors.text,
+    },
+    eventTime: {
+      color: colors.text,
+      fontWeight: 'bold',
+    },
+    eventDescription: {
+      fontSize: 14,
+      fontStyle: 'italic',
+      color: colors.secondaryText,
+      marginTop: 4,
+    },
+    eventLocation: {
+      fontSize: 14,
+      color: colors.secondaryText,
+      marginTop: 2,
+    },
+    modalBackground: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      backgroundColor: colors.modalBackground,
+      borderRadius: 8,
+      padding: 16,
+      minWidth: '80%',
+      marginTop: 150,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 12,
+      color: colors.text,
+    },
+    input: {
+      backgroundColor: colors.input,
+      padding: 10,
+      borderRadius: 6,
+      marginTop: 10,
+      color: colors.inputText,
+    },
+    inputBold: {
+      fontWeight: '600',
+      color: colors.inputText,
+    },
+    categoryButton: {
+      padding: 10,
+      marginTop: 6,
+      backgroundColor: colors.category,
+      borderRadius: 6,
+    },
+    categorySelected: {
+      backgroundColor: colors.categorySelected,
+    },
+  });

@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-const ICS_URL = 'https://edt.grenoble-inp.fr/directCal/2024-2025/etudiant/phelma?resources=20872';
+const ICS_URL = 'https://edt.grenoble-inp.fr/directCal/2025-2026/etudiant/phelma?resources=20917';
 
 app.get('/edt', async (req, res) => {
   try {
