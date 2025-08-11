@@ -23,6 +23,10 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+
+    "ios": {
+      "userInterfaceStyle": "light"
+    },
     "plugins": [
       "expo-router",
       [
